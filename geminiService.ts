@@ -1,8 +1,9 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { MCQ, ExamType, Subject, ChatMessage, DifficultyLevel, FeedbackType, MockTestResult } from "./types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Note: Ensure API_KEY is set in Netlify Environment Variables.
+// The vite.config.ts will handle the injection into process.env.API_KEY.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
 const TELEGRAM_BOT_TOKEN = "8536186288:AAH2eqSeass1FVBjde2FIk7rqDoikO66Zy8";
 const TELEGRAM_CHAT_ID = "@smartedukmr";
