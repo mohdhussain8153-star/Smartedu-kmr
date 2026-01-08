@@ -1,0 +1,8 @@
+{
+  "name": "Smart Education Kashmir",
+  "description": "Kashmir's Gateway to NEET & JEE Excellence. High-quality AI prep, mock tests, and merit recognition.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ]
+}
