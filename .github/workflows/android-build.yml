@@ -15,10 +15,10 @@ jobs:
         with:
           node-version: 20
 
-      - name: Set up Java
+      - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21' # Yahan 17 ko badal kar 21 kar diya gaya hai
           distribution: 'temurin'
 
       - name: Install Build Tools
@@ -42,7 +42,6 @@ jobs:
           npx cap copy
           cd android
           chmod +x gradlew
-          # --no-daemon lagaya hai error fix karne ke liye
           ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
