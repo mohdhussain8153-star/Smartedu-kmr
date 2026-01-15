@@ -14,3 +14,4 @@ root.render(
     <App />
   </React.StrictMode>
 );
+<script src="features/idCardDownload.js"></script>
