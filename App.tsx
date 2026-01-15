@@ -1,4 +1,4 @@
-
+import { toPng } from 'html-to-image';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   ExamType, Subject, MCQ, UserProfile, AppSettings, ExamSession, ChatMessage, DifficultyLevel, EnergyLevel, MockTestResult, JournalEntry
@@ -613,7 +613,37 @@ const ProfileView = ({ user, onUpdate }: { user: UserProfile, onUpdate: (u: Part
   const [editedStatus, setEditedStatus] = useState(user.status || '');
   const [editedAim, setEditedAim] = useState(user.aim || '');
   const fileInputRef = useRef<HTMLInputElement>(null);
+const ProfileView = ({ user, onUpdate }: { user: UserProfile, onUpdate: (u: Partial<UserProfile>) => void }) => {
+  const cardRef = useRef<HTMLDivElement>(null); // Ref yahan add karein
 
+  // Download logic
+  const downloadCard = async () => {
+    if (cardRef.current) {
+      const dataUrl = await toPng(cardRef.current, { cacheBust: true, pixelRatio: 2 });
+      const link = document.createElement('a');
+      link.download = `${user.name}-ID-Card.png`;
+      link.href = dataUrl;
+      link.click();
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center p-4">
+      {/* Is div mein ref={cardRef} add karein */}
+      <div ref={cardRef} className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-sm text-center border-2 border-blue-500">
+          <img src={user.profilePic || 'default-avatar.png'} className="w-32 h-32 rounded-full mx-auto" />
+          <h2 className="text-2xl font-bold mt-2">{user.name}</h2>
+          <p className="text-blue-600">UID: {user.uid}</p>
+          <p className="mt-2 text-gray-600">"{user.status}"</p>
+      </div>
+
+      {/* Naya Download Button */}
+      <button onClick={downloadCard} className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg font-bold shadow-md">
+        Download Card 📥
+      </button>
+    </div>
+  );
+};
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
