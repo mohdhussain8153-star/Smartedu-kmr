@@ -1,16 +1,16 @@
 name: Build Android APK
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -21,23 +21,23 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install Capacitor CLI
-        run: npm install @capacitor/cli @capacitor/core @capacitor/android
-
-      - name: Prepare Folder
+      - name: Install Build Tools
         run: |
-          # Ek 'www' folder banayenge jahan saara code jayega
-          mkdir -p www
-          # Saari HTML, JS aur CSS files ko 'www' mein copy karein
-          cp -r * www/ 2>/dev/null || :
-          # Agar koi purana folder hai toh use delete karein taaki error na aaye
-          rm -rf www/android www/node_modules www/www
+          # Sabse pehle Vite aur TypeScript install karenge taaki .tsx build ho sake
+          npm install -g vite typescript
+          npm install @vitejs/plugin-react @capacitor/core @capacitor/android @capacitor/cli
 
-      - name: Setup Capacitor
+      - name: Force Build Web App
         run: |
-          # Fresh configuration banayein
-          rm -f capacitor.config.json
-          npx cap init "Smartedukmr" com.smartedukmr.app --web-dir www
+          # Agar package.json mein build script nahi hai, toh hum manual vite build chalayenge
+          mkdir -p dist
+          npx vite build --outDir dist || cp index.html dist/
+
+      - name: Initialize Capacitor
+        run: |
+          # Purani files delete karke fresh init
+          rm -rf android capacitor.config.json
+          npx cap init "Smartedukmr" com.smartedukmr.app --web-dir dist
           npx cap add android
 
       - name: Build APK
@@ -45,7 +45,7 @@ jobs:
           npx cap copy
           cd android && ./gradlew assembleDebug
 
-      - name: Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
           name: Smartedukmr-APK
