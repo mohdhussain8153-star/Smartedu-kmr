@@ -21,33 +21,23 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install Dependencies
-        run: |
-          # Agar package.json nahi hai toh basic create kar dega
-          if [ ! -f "package.json" ]; then
-            npm init -y
-            npm install @capacitor/core @capacitor/android @capacitor/cli
-          else
-            npm install || npm install --legacy-peer-deps
-          fi
+      - name: Install Capacitor CLI
+        run: npm install @capacitor/cli @capacitor/core @capacitor/android
 
-      - name: Prepare Web Directory
+      - name: Prepare Folder
         run: |
-          # Ye step check karega ki build folder hai ya nahi, nahi toh banayega
-          if grep -q "build" package.json; then
-            npm run build || mkdir -p dist
-          else
-            mkdir -p dist
-          fi
-          # Saari files ko dist mein copy karega taaki capacitor ko mil jayein
-          cp -r index.html *.js *.css *.png *.jpg *.svg dist/ 2>/dev/null || :
-          cp -r src/* dist/ 2>/dev/null || :
+          # Ek 'www' folder banayenge jahan saara code jayega
+          mkdir -p www
+          # Saari HTML, JS aur CSS files ko 'www' mein copy karein
+          cp -r * www/ 2>/dev/null || :
+          # Agar koi purana folder hai toh use delete karein taaki error na aaye
+          rm -rf www/android www/node_modules www/www
 
       - name: Setup Capacitor
         run: |
-          # Pehle se bani config file delete karega taaki fresh start ho
-          rm -rf capacitor.config.json
-          npx cap init "Smartedukmr" com.smartedukmr.app --web-dir dist
+          # Fresh configuration banayein
+          rm -f capacitor.config.json
+          npx cap init "Smartedukmr" com.smartedukmr.app --web-dir www
           npx cap add android
 
       - name: Build APK
