@@ -1,3 +1,17 @@
+import { useEffect } from 'react';
+import './features/idCardDownload.js';
+
+function AppWrapper() {
+  useEffect(() => {
+    if (window.IDCardDownload) {
+      window.IDCardDownload.init();
+    }
+  }, []);
+
+  return <App />; // existing app component
+}
+
+export default AppWrapper;
 import './features/idCardDownload.js';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
