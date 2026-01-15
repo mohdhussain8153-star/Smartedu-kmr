@@ -8,34 +8,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # Updated to v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4 # Updated to v4
         with:
           node-version: 18
 
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4 # Updated to v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
       - name: Install Build Tools
         run: |
-          # Sabse pehle Vite aur TypeScript install karenge taaki .tsx build ho sake
           npm install -g vite typescript
+          # Agar package.json nahi hai toh create karein
+          if [ ! -f "package.json" ]; then npm init -y; fi
           npm install @vitejs/plugin-react @capacitor/core @capacitor/android @capacitor/cli
 
       - name: Force Build Web App
         run: |
-          # Agar package.json mein build script nahi hai, toh hum manual vite build chalayenge
           mkdir -p dist
+          # Vite build chalayenge jo index.tsx ko compile karega
           npx vite build --outDir dist || cp index.html dist/
 
       - name: Initialize Capacitor
         run: |
-          # Purani files delete karke fresh init
           rm -rf android capacitor.config.json
           npx cap init "Smartedukmr" com.smartedukmr.app --web-dir dist
           npx cap add android
@@ -46,7 +46,7 @@ jobs:
           cd android && ./gradlew assembleDebug
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4 # FIXED: v3 ki jagah v4 kar diya hai
         with:
           name: Smartedukmr-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
