@@ -1,4 +1,4 @@
-
+import './features/idCardDownload.js';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   ExamType, Subject, MCQ, UserProfile, AppSettings, ExamSession, ChatMessage, DifficultyLevel, EnergyLevel, MockTestResult, JournalEntry
