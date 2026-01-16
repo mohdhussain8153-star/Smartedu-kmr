@@ -4,6 +4,9 @@ on:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
+permissions:
+  contents: write  # Ye line 403 error ko theek karegi
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,10 +25,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Build Tools
+      - name: Install Capacitor & Vite
         run: |
           npm install -g vite
           npm install @capacitor/core @capacitor/android @capacitor/cli
@@ -62,7 +62,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
-          BUILD_TOOLS_VERSION: "34.0.0" # <--- Ye line error theek karegi
+          BUILD_TOOLS_VERSION: "34.0.0"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
