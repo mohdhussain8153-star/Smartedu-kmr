@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write  # Ye line 403 error ko theek karegi
+  contents: write
 
 jobs:
   build:
@@ -25,7 +25,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install Capacitor & Vite
+      - name: Install Tools
         run: |
           npm install -g vite
           npm install @capacitor/core @capacitor/android @capacitor/cli
@@ -33,13 +33,23 @@ jobs:
       - name: Force Build Web App
         run: |
           mkdir -p dist
-          npx vite build --outDir dist || cp index.html dist/
+          npx vite build --outDir dist
+        env:
+          # Ye line Secret se key uthayegi
+          VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
+          # Agar aapka code process.env.API_KEY dhund raha hai toh ye line bhi chahiye
+          API_KEY: ${{ secrets.VITE_API_KEY }}
 
       - name: Initialize Capacitor
         run: |
           rm -rf android capacitor.config.json
           npx cap init "Smartedukmr" com.smartedukmr.app --web-dir dist
           npx cap add android
+
+      - name: Permissions & Network Fix
+        run: |
+          sed -i '/<manifest/a \    <uses-permission android:name="android.permission.INTERNET" />' android/app/src/main/AndroidManifest.xml
+          sed -i '/<application/a \        android:usesCleartextTraffic="true"' android/app/src/main/AndroidManifest.xml
 
       - name: Fix Kotlin Duplicate Classes
         run: |
